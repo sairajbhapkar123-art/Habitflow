@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<title>HabitFlow — Dark Habit Tracker</title>
+<style>
+:root{
+ --bg:#050505;--panel:#0b0b0d;--panel2:#101012;--panel3:#151517;--line:#232327;
+ --text:#f4f4f2;--muted:#858589;--soft:#b8b8bc;--accent:#d8d8d2;--green:#9fd3ad;
+ --shadow:0 20px 60px #0008;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 80% 0,#222 0,transparent 28%),radial-gradient(circle at 15% 80%,#171717 0,transparent 25%);opacity:.65}
+button,input{font:inherit}.app{min-height:100vh;display:flex;max-width:1280px;margin:auto;position:relative}
+.sidebar{width:225px;border-right:1px solid var(--line);padding:26px 15px;position:sticky;top:0;height:100vh;background:#070708eF;backdrop-filter:blur(18px)}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.7px;padding:0 12px 30px}.logo i{font-style:normal;color:#9b9b9d}
+.nav{display:grid;gap:7px}.nav button{background:none;border:0;color:var(--muted);padding:12px 13px;text-align:left;border-radius:12px;cursor:pointer;font-weight:650}.nav button.active,.nav button:hover{background:#171719;color:#fff}.nav small{display:block;color:#4f4f52;padding:22px 13px 7px;text-transform:uppercase;letter-spacing:1.4px;font-size:10px}
+.sidequote{position:absolute;bottom:25px;left:22px;right:22px;color:#626266;font-size:12px;line-height:1.6;border-left:2px solid #2d2d30;padding-left:11px}
+main{flex:1;padding:30px 34px 70px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:27px}.mobile-logo{display:none}.top-actions{display:flex;gap:9px}.circle{width:39px;height:39px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:#aaa;cursor:pointer}
+.view{display:none}.view.active{display:block}.eyebrow{font-size:12px;color:var(--muted);letter-spacing:.6px}.hero h1{font-size:39px;line-height:1.05;margin:6px 0 9px;letter-spacing:-1.7px}.hero p{margin:0;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:1.45fr .75fr;gap:16px;margin-top:25px}
+.card{background:linear-gradient(145deg,#111113,#0b0b0d);border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 35px #0005;padding:18px}.cardhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.cardhead h2{font-size:15px;margin:0}.sub{color:var(--muted);font-size:12px}
+.bigstat{font-size:40px;font-weight:800;letter-spacing:-1.5px}.progress{height:7px;background:#222225;border-radius:20px;overflow:hidden;margin-top:12px}.progress span{display:block;height:100%;width:0;background:#bdbdb8;border-radius:20px;transition:.25s}
+.habit{display:flex;align-items:center;gap:12px;padding:13px 2px;border-top:1px solid #1d1d20}.check{width:28px;height:28px;border:1px solid #4b4b50;border-radius:9px;background:#0d0d0f;color:#111;display:grid;place-items:center;cursor:pointer;font-weight:900}.habit.done .check{background:#deded7;border-color:#deded7}.habit.done .name{text-decoration:line-through;color:#69696e}.name{flex:1;font-weight:650}.tag{font-size:10px;color:#777;border:1px solid #29292d;padding:4px 7px;border-radius:20px}.del{background:none;border:0;color:#505055;cursor:pointer;font-size:17px}.add{width:100%;margin-top:12px;padding:12px;border-radius:12px;background:#161618;border:1px dashed #38383d;color:#bcbcbc;cursor:pointer;font-weight:700}
+.quote{min-height:220px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(150deg,#111,#080808)}.quote mark{background:none;color:#d0d0cb;font-size:29px;line-height:1.15;font-weight:750;letter-spacing:-.8px}.quote small{color:#5f5f63}.quote .qmark{font-size:50px;color:#333;line-height:.5}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.weekday{text-align:center;color:#68686d;font-size:10px}.daybar{height:70px;border-radius:10px;background:#171719;margin-top:6px;display:flex;align-items:flex-end;padding:5px}.daybar i{display:block;width:100%;height:10%;border-radius:7px;background:#39393d}.daybar.good i{background:#9c9c96}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini .card{box-shadow:none}.mini strong{font-size:25px}.mini span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.calday{aspect-ratio:1;border-radius:9px;background:#111113;display:grid;place-items:center;color:#69696d;font-size:11px}.calday.done{background:#343432;color:#eee}.calday.today{outline:1px solid #aaa}
+.quote-list{display:grid;gap:12px}.quote-item{padding:20px;border:1px solid var(--line);border-radius:17px;background:#0d0d0f}.quote-item p{font-size:18px;line-height:1.45;margin:0 0 9px;color:#ddd}.quote-item span{font-size:11px;color:#666}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;padding:15px;z-index:5}.modal.open{display:flex}.sheet{width:min(570px,100%);background:#111114;border:1px solid #303035;border-radius:22px;padding:20px}.sheet h2{margin:0 0 14px}.sheet input{width:100%;background:#08080a;border:1px solid #303035;color:#fff;border-radius:12px;padding:13px;outline:none}.actions{display:flex;gap:9px;margin-top:12px}.actions button{flex:1;padding:12px;border-radius:12px;border:0;cursor:pointer}.cancel{background:#252528;color:#ccc}.save{background:#ddd;color:#111;font-weight:800}
+@media(max-width:800px){.sidebar{display:none}.mobile-logo{display:block;font-weight:900}.app main{padding:20px 15px 90px}.grid{grid-template-columns:1fr}.hero h1{font-size:31px}.quote{min-height:190px}.top{margin-bottom:22px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="logo">Habit<span>Flow</span></div>
+ <div class="nav">
+  <small>Workspace</small>
+  <button class="active" data-view="home">⌂ &nbsp; Overview</button>
+  <button data-view="habits">✓ &nbsp; My habits</button>
+  <button data-view="progress">◫ &nbsp; Progress</button>
+  <small>Mindset</small>
+  <button data-view="quotes">✦ &nbsp; Motivation</button>
+ </div>
+ <div class="sidequote">“Small steps every day become a completely different life.”</div>
+</aside>
+<main>
+ <header class="top"><div class="mobile-logo">Habit<span style="color:#999">Flow</span></div><div></div><div class="top-actions"><button class="circle" title="Focus mode" onclick="focusMode()">◌</button><button class="circle" title="Reset today" onclick="resetToday()">↻</button></div></header>
+
+<section class="view active" id="home">
+ <div class="hero"><div class="eyebrow" id="date"></div><h1>Build better habits.<br><span style="color:#777">One day at a time.</span></h1><p id="hello">Your future is built by what you repeat today.</p></div>
+ <div class="grid">
+  <div class="card"><div class="cardhead"><h2>Today's habits</h2><span class="sub" id="pct">0%</span></div><div id="habitList"></div><button class="add" onclick="openModal()">＋ Add a habit</button></div>
+  <div>
+   <div class="card" style="margin-bottom:16px"><div class="cardhead"><h2>Daily score</h2><span class="sub">TODAY</span></div><div class="bigstat" id="score">0/0</div><div class="progress"><span id="bar"></span></div><div class="sub" style="margin-top:10px" id="scoreText">Get started.</div></div>
+   <div class="card quote"><div class="qmark">“</div><mark id="quote">Discipline is choosing what you want most over what you want now.</mark><small>DAILY REMINDER</small></div>
+  </div>
+ </div>
+ <div class="grid">
+  <div class="card"><div class="cardhead"><h2>Consistency</h2><span class="sub">LAST 7 DAYS</span></div><div class="week" id="week"></div></div>
+  <div class="mini"><div class="card"><strong id="streak">0</strong><span>day streak 🔥</span></div><div class="card"><strong id="best">0</strong><span>best streak</span></div></div>
+ </div>
+</section>
+
+<section class="view" id="habits"><div class="hero"><div class="eyebrow">YOUR SYSTEM</div><h1>My habits.</h1><p>Keep the habits that move your life forward.</p></div><div class="card" style="margin-top:25px"><div id="habitList2"></div><button class="add" onclick="openModal()">＋ Add a habit</button></div></section>
+
+<section class="view" id="progress"><div class="hero"><div class="eyebrow">YOUR DATA</div><h1>Progress.</h1><p>Consistency beats intensity.</p></div><div class="grid"><div class="card"><div class="cardhead"><h2>7-day consistency</h2></div><div class="week" id="week2"></div></div><div class="card"><div class="cardhead"><h2>Streak</h2></div><div class="bigstat" id="streak2">0 days</div><div class="sub">Keep showing up.</div></div></div><div class="card" style="margin-top:16px"><div class="cardhead"><h2>Activity calendar</h2><span class="sub">THIS MONTH</span></div><div class="calendar" id="calendar"></div></div></section>
+
+<section class="view" id="quotes"><div class="hero"><div class="eyebrow">MINDSET</div><h1>Keep going.</h1><p>Read one when motivation gets quiet.</p></div><div class="quote-list" style="margin-top:25px">
+ <div class="quote-item"><p>“You don't need a perfect day. You need another day of showing up.”</p><span>HABITFLOW</span></div>
+ <div class="quote-item"><p>“The version of you that you want to become is built through ordinary choices.”</p><span>HABITFLOW</span></div>
+ <div class="quote-item"><p>“Make it so small that you cannot talk yourself out of doing it.”</p><span>HABITFLOW</span></div>
+ <div class="quote-item"><p>“Consistency is quiet. Results are loud.”</p><span>HABITFLOW</span></div>
+</div></section>
+</main></div>
+
+<div class="modal" id="modal"><div class="sheet"><h2>Add a habit</h2><input id="habitInput" maxlength="45" placeholder="e.g. Walk 30 minutes"><div class="actions"><button class="cancel" onclick="closeModal()">Cancel</button><button class="save" onclick="addHabit()">Add habit</button></div></div></div>
+
+<script>
+const KEY="habitflow-aesthetic-v2";
+const quotes=["Discipline is choosing what you want most over what you want now.","You don't need a perfect day. Just another day of showing up.","Small actions repeated daily become extraordinary results.","Consistency is quiet. Results are loud.","Start before you're ready. Keep going after motivation fades."];
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||{habits:["Workout","Study 2 hours","Drink enough water","Read 20 minutes"].map(name=>({name,done:false})),history:{},best:0};
+const $=x=>document.getElementById(x), today=()=>new Date().toISOString().slice(0,10);
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function sync(){data.history[today()]=data.habits.length?data.habits.filter(h=>h.done).length/data.habits.length:0;save()}
+function streak(){let n=0,d=new Date();while(data.history[d.toISOString().slice(0,10)]>=1){n++;d.setDate(d.getDate()-1)}data.best=Math.max(data.best,n);return n}
+function habitHTML(target){
+ const el=$(target);el.innerHTML="";
+ data.habits.forEach((h,i)=>{let r=document.createElement("div");r.className="habit"+(h.done?" done":"");r.innerHTML='<button class="check">'+(h.done?"✓":"")+'</button><span class="name"></span><span class="tag">daily</span><button class="del">×</button>';r.querySelector(".name").textContent=h.name;
+ r.querySelector(".check").onclick=()=>{h.done=!h.done;sync();render()};r.querySelector(".del").onclick=()=>{data.habits.splice(i,1);sync();render()};el.appendChild(r)})
+}
+function week(target){
+ const el=$(target);el.innerHTML="";let names=["S","M","T","W","T","F","S"],now=new Date();
+ for(let i=6;i>=0;i--){let d=new Date(now);d.setDate(now.getDate()-i);let k=d.toISOString().slice(0,10),v=data.history[k]||0;el.innerHTML+=`<div class="weekday">${names[d.getDay()]}<div class="daybar ${v>=1?"good":""}"><i style="height:${Math.max(10,v*100)}%"></i></div></div>`}
+}
+function calendar(){let el=$("calendar");el.innerHTML="";let d=new Date(),y=d.getFullYear(),m=d.getMonth(),last=new Date(y,m+1,0).getDate();for(let i=1;i<=last;i++){let k=`${y}-${String(m+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`,v=data.history[k]||0;el.innerHTML+=`<div class="calday ${v>=1?"done":""} ${k===today()?"today":""}">${i}</div>`}}
+function render(){
+ $("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+ let done=data.habits.filter(h=>h.done).length,total=data.habits.length,p=total?Math.round(done/total*100):0;
+ $("score").textContent=`${done}/${total}`;$("pct").textContent=p+"%";$("bar").style.width=p+"%";$("scoreText").textContent=p===100?"Perfect. Protect the streak.":p>=50?"You're over halfway. Finish strong.":"One completed habit is better than zero.";
+ $("streak").textContent=streak();$("best").textContent=data.best;$("streak2").textContent=streak()+" days";$("quote").textContent=quotes[new Date().getDate()%quotes.length];
+ habitHTML("habitList");habitHTML("habitList2");week("week");week("week2");calendar();
+}
+function openModal(){$("modal").classList.add("open");$("habitInput").value="";$("habitInput").focus()}function closeModal(){$("modal").classList.remove("open")}
+function addHabit(){let v=$("habitInput").value.trim();if(v){data.habits.push({name:v,done:false});save();closeModal();render()}}
+$("habitInput").addEventListener("keydown",e=>{if(e.key==="Enter")addHabit()});
+function resetToday(){data.habits.forEach(h=>h.done=false);sync();render()}
+function focusMode(){document.querySelector(".sidebar").style.display=document.querySelector(".sidebar").style.display==="none"?"":"none"}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));$(b.dataset.view).classList.add("active");window.scrollTo(0,0)});
+sync();render();
+</script>
+</body>
+</html>
